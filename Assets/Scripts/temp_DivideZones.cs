@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DivideZones : MonoBehaviour
+public class temp_DivideZones : MonoBehaviour
 {
 
     float x; float y; float z;
@@ -15,26 +15,25 @@ public class DivideZones : MonoBehaviour
     private static float Rot2Deg = 117.59067678f;
     private static float Flt2Rot = 57.296f;
 
-    private float rotPhi;
-    public float rotTheta;
+    private float delPhi = 0;
+    public float delTheta = 0;
 
     private GameObject testSubject;
     private GameObject dot;
     private int p;
-    private Vector3 currentMP;
+    private Vector3 currentMousePosition;
     private Vector3 direction;
     private Quaternion lookRotation;
-    private List<List<Vector3>> allVertexPositions;
-    private List<Vector3> vertexPositions;
+    private List<List<Vector2>> allVertexPositions;
+    private List<Vector2> vertexPositions;
 
+    private float totalZoneNumber =0;
     private float[] selectedZoneVertexPositions;
     private int selectedZoneNumber;
 
     // Use this for initialization
     void Start()
     {
-
-
         //for test drawing
         testSubject = GameObject.Find("testSphere");
         dot = GameObject.Find("dot");
@@ -43,43 +42,40 @@ public class DivideZones : MonoBehaviour
         DrawLatitudeLine(testRadius, 30 * Mathf.Deg2Rad, 2);
         DrawLongitudeLine(testRadius, 30 * Mathf.Deg2Rad, 2);
 
-        allVertexPositions = new List<List<Vector3>>();
+        allVertexPositions = new List<List<Vector2>>();
 
         Debug.Log("Draw Complete");
-        
-        //for getting zone number
-        SetVertices(30 * Mathf.Deg2Rad, 30 * Mathf.Deg2Rad);
-        Debug.Log("# of zones: " + GetVerticesNumber(30 * Mathf.Deg2Rad, 30 * Mathf.Deg2Rad));
+
+        SetVertices(30 * Mathf.Deg2Rad, 30 * Mathf.Deg2Rad, delTheta, delPhi);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            SetVertices(30 * Mathf.Deg2Rad, 30 * Mathf.Deg2Rad);
-            CheckZoneNumber(30 * Mathf.Deg2Rad, 30 * Mathf.Deg2Rad);
-        }
-
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            testSubject.transform.Rotate(Vector3.up, -20.0f , Space.World);
-            rotPhi -= 20.0f;
+            testSubject.transform.Rotate(Vector3.up, -20.0f, Space.World);
+            delPhi -= 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             testSubject.transform.Rotate(Vector3.up, +20.0f, Space.World);
-            rotPhi += 20.0f;
+            delPhi += 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             testSubject.transform.Rotate(Vector3.forward, 20.0f, Space.World);
-            rotTheta -= 20.0f;
+            delTheta -= 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             testSubject.transform.Rotate(Vector3.forward, -20.0f, Space.World);
-            rotTheta += 20.0f;
+            delTheta += 20.0f;
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            SetVertices(30, 30, delTheta, delPhi);
+            GetZoneNumber(SetSphericalMousePosition(delTheta, delPhi));
         }
     }
 
@@ -171,95 +167,72 @@ public class DivideZones : MonoBehaviour
         }
     }
 
-    void SetVertices(float thetaInterval_rad, float phiInterval_rad)
+    void SetVertices(float thetaInterval, float phiInterval, float delTheta, float delPhi)
     {
-        for (int i = 0; i <= 180 * Mathf.Deg2Rad / thetaInterval_rad; i++)
+        totalZoneNumber = 0;
+        for (int i = 0; i <= 180 / thetaInterval; i++)
         {
-            for (int j = 0; j <= 360 * Mathf.Deg2Rad / phiInterval_rad; j++)
+            for (int j = 0; j <= 360 / phiInterval; j++)
             {
-                vertexPositions = new List<Vector3>();
+                vertexPositions = new List<Vector2>();
 
-                vertexPositions.Add(SetVerticePosition(2, i * thetaInterval_rad * Mathf.Rad2Deg, j * phiInterval_rad * Mathf.Rad2Deg, testSubject));
-                vertexPositions.Add(SetVerticePosition(2, (i + 1) * thetaInterval_rad * Mathf.Rad2Deg, j * phiInterval_rad * Mathf.Rad2Deg, testSubject));
-                vertexPositions.Add(SetVerticePosition(2, (i + 1) * thetaInterval_rad * Mathf.Rad2Deg, (j + 1) * phiInterval_rad * Mathf.Rad2Deg, testSubject));
+                vertexPositions.Add(SetVerticePosition(i * thetaInterval, j * phiInterval, delTheta, delPhi));
+                vertexPositions.Add(SetVerticePosition((i + 1) * thetaInterval, j * phiInterval, delTheta, delPhi));
+                vertexPositions.Add(SetVerticePosition((i + 1) * thetaInterval, (j + 1) * phiInterval, delTheta, delPhi));
 
                 allVertexPositions.Add(vertexPositions);
+
+                totalZoneNumber++;
             }
         }
     }
 
-    Vector3 SetVerticePosition(float rad, float theta, float phi, GameObject parentObj)
+    Vector2 SetVerticePosition(float theta, float phi, float delTheta, float delPhi)
     {
-        Vector2 position;
-        position = new Vector2(theta + rotTheta, phi + rotPhi);
-
-        position.x = CorrectTheta(position.x);
-        position.y = CorrectPhi(position.y);
-
-        return new Vector3(2, position.x, position.y);
-
+        Vector2 position = new Vector2(theta + delTheta, phi + delPhi);
+        return position;
     }
 
-    int GetVerticesNumber(float thetaInterval_rad, float phiInterval_rad)
-    {
-        int num = 0;
-        for (int i = 0; i < 180 * Mathf.Deg2Rad / thetaInterval_rad; i++)
-        {
-            for (int j = 0; j < 360 * Mathf.Deg2Rad / phiInterval_rad; j++)
-            {
-                num++;
-            }
-        }
-        return num;
-    }
-
-    void CheckZoneNumber(float thetaInterval_rad, float phiInterval_rad)
+    Vector2 SetSphericalMousePosition(float delTheta, float delPhi)
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if(Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit))
         {
-            currentMP = hit.point;
+            currentMousePosition = hit.point;
         }
 
-        Debug.Log("Current MousePosition(world) is: " + currentMP);
+        Debug.Log("Current MousePosition(world) is: " + currentMousePosition);
 
-        currentMP = CartesianToSpherical(currentMP, testSubject.transform.position);                             //currentMP = (rad, theta, phi)
-        Vector2 currentMP2 = new Vector2(currentMP.y - rotTheta, currentMP.z - rotPhi);                          //currentMP2 = (theta, phi)
+        currentMousePosition = CartesianToSpherical(currentMousePosition, testSubject.transform.position);                             //currentMP = (rad, theta, phi)
+        Vector2 currentMousePosition2 = new Vector2(currentMousePosition.y - delTheta, currentMousePosition.z - delPhi);                          //currentMP2 = (theta, phi)
 
-        currentMP2.y = CorrectPhi(currentMP2.y);
-        currentMP2.x = CorrectTheta(currentMP2.x);
+        currentMousePosition2.y = CorrectPhi(currentMousePosition2.y);
+        currentMousePosition2.x = CorrectTheta(currentMousePosition2.x);
 
-        currentMP = new Vector3(currentMP.x, currentMP2.x, currentMP2.y);
+        Debug.Log("Current MousePosition(world, Spherical)) is: " + currentMousePosition2);
 
-        Debug.Log("Current MousePosition(world, Spherical)) is: " + currentMP);
+        return currentMousePosition2;
+    }
 
-        for (int k = 0; k < allVertexPositions.Count; k++)
+    void GetZoneNumber(Vector2 mousePosition_spherical)
+    {
+        for(int i = 0; i < totalZoneNumber; i++)
         {
-            //Debug.Log(allvertexPositions[k][0].x + " " + allvertexPositions[k][0].y + " " + allvertexPositions[k][0].z);
-            //Debug.Log(allVertexPositions[k][1].y + " " + allVertexPositions[k][0].y + " " + allVertexPositions[k][1].z + " " + allVertexPositions[k][2].z);
-            if(currentMP.y > allVertexPositions[k][0].y && currentMP.y < allVertexPositions[k][1].y && currentMP.z > allVertexPositions[k][1].z && currentMP.z < allVertexPositions[k][2].z)
+            if (mousePosition_spherical.x > allVertexPositions[i][0].x && mousePosition_spherical.x < allVertexPositions[i][1].x
+                && mousePosition_spherical.y > allVertexPositions[i][1].y && mousePosition_spherical.y < allVertexPositions[i][2].y)
             {
-                Debug.Log("Zone " + k + " is selected");
-
-                selectedZoneVertexPositions = new float[4];
-                selectedZoneVertexPositions[0] = allVertexPositions[k][0].y;
-                selectedZoneVertexPositions[1] = allVertexPositions[k][1].y;
-                selectedZoneVertexPositions[2] = allVertexPositions[k][1].z;
-                selectedZoneVertexPositions[3] = allVertexPositions[k][2].z;
-
-                selectedZoneNumber = k;
-
-                break;
+                Debug.Log(allVertexPositions[i][0] + " " + allVertexPositions[i][1] + " " + allVertexPositions[i][2]);
+                Debug.Log("Selected Zone #: " + i);
             }
         }
     }
 
-    float CorrectTheta (float theta)
+    float CorrectTheta(float theta)
     {
-        
-        if(theta < 0)
+
+        if (theta < 0)
         {
             theta = -theta;
         }
@@ -289,15 +262,5 @@ public class DivideZones : MonoBehaviour
             phi += 360;
         }
         return phi;
-    }
-
-    public float[] GetSelectedZoneVertices()
-    {
-        return selectedZoneVertexPositions;
-    }
-
-    public int GetSelectedZoneNumber()
-    {
-        return selectedZoneNumber;
     }
 }
