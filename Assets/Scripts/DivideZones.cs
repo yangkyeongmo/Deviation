@@ -189,17 +189,22 @@ public class DivideZones : MonoBehaviour
 
     Vector3 SetVerticePosition(float rad, float theta, float phi, GameObject parentObj)
     {
-        Vector3 position;
-        position = new Vector3(rad, theta, phi);
+        Vector2 position;
+        position = new Vector2(theta, phi);
         //position.z += rotX;
         //position.y += rotY;
-        position = Quaternion.Euler(new Vector3(0f, rotY, rotX)) * position;
+        RotateVector(position);
 
-        position.z = CorrectTheta(position.z);
+        position.x = CorrectTheta(position.x);
         position.y = CorrectPhi(position.y);
 
-        return position;
+        return new Vector3(2, position.x, position.y);
 
+    }
+
+    void RotateVector(Vector3 vec)
+    {
+        vec = Quaternion.Euler(new Vector2(rotY, rotY)) * vec;
     }
 
     int GetVerticesNumber(float thetaInterval_rad, float phiInterval_rad)
@@ -227,13 +232,14 @@ public class DivideZones : MonoBehaviour
 
         Debug.Log("Current MousePosition(world) is: " + currentMP);
 
-        currentMP = CartesianToSpherical(currentMP, testSubject.transform.position);
-        //currentMP.z += rotX;
-        //currentMP.y += rotY;
-        currentMP = Quaternion.Euler(new Vector3(0f, rotY, rotX)) * currentMP;
+        currentMP = CartesianToSpherical(currentMP, testSubject.transform.position);         //currentMP = (rad, theta, phi)
+        Vector2 currentMP2 = new Vector2(currentMP.y, currentMP.z);
+        RotateVector(currentMP2);                                                            //currentMP2 = (theta, phi)
 
-        currentMP.z = CorrectPhi(currentMP.z);
-        currentMP.y = CorrectTheta(currentMP.y);
+        currentMP2.y = CorrectPhi(currentMP2.y);
+        currentMP2.x = CorrectTheta(currentMP2.x);
+
+        currentMP = new Vector3(currentMP.x, currentMP2.x, currentMP2.y);
 
         Debug.Log("Current MousePosition(world, Spherical)) is: " + currentMP);
 
@@ -261,7 +267,7 @@ public class DivideZones : MonoBehaviour
     float CorrectTheta (float theta)
     {
         
-        while (theta > 180 || theta < 0)
+        while (theta > 180)
         {
             if ((System.Math.Truncate(theta / 180) % 2) == 1)
             {
