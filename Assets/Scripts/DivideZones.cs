@@ -15,8 +15,8 @@ public class DivideZones : MonoBehaviour
     private static float Rot2Deg = 117.59067678f;
     private static float Flt2Rot = 57.296f;
 
-    private float rotX;
-    public float rotY;
+    private float rotPhi;
+    public float rotTheta;
 
     private GameObject testSubject;
     private GameObject dot;
@@ -64,22 +64,22 @@ public class DivideZones : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             testSubject.transform.Rotate(Vector3.up, -20.0f , Space.World);
-            rotX += 20.0f;
+            rotPhi -= 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             testSubject.transform.Rotate(Vector3.up, +20.0f, Space.World);
-            rotX -= 20.0f;
+            rotPhi += 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             testSubject.transform.Rotate(Vector3.forward, 20.0f, Space.World);
-            rotY += 20.0f;
+            rotTheta -= 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             testSubject.transform.Rotate(Vector3.forward, -20.0f, Space.World);
-            rotY -= 20.0f;
+            rotTheta += 20.0f;
         }
     }
 
@@ -92,6 +92,7 @@ public class DivideZones : MonoBehaviour
 
     Vector3 CartesianToSpherical(Vector3 sc, Vector3 origin)
     {
+        //Cartesain To Spherical
         //x = x
         //y = z
         //z = y
@@ -190,21 +191,13 @@ public class DivideZones : MonoBehaviour
     Vector3 SetVerticePosition(float rad, float theta, float phi, GameObject parentObj)
     {
         Vector2 position;
-        position = new Vector2(theta, phi);
-        //position.z += rotX;
-        //position.y += rotY;
-        RotateVector(position);
+        position = new Vector2(theta + rotTheta, phi + rotPhi);
 
         position.x = CorrectTheta(position.x);
         position.y = CorrectPhi(position.y);
 
         return new Vector3(2, position.x, position.y);
 
-    }
-
-    void RotateVector(Vector3 vec)
-    {
-        vec = Quaternion.Euler(new Vector2(rotY, rotY)) * vec;
     }
 
     int GetVerticesNumber(float thetaInterval_rad, float phiInterval_rad)
@@ -233,8 +226,7 @@ public class DivideZones : MonoBehaviour
         Debug.Log("Current MousePosition(world) is: " + currentMP);
 
         currentMP = CartesianToSpherical(currentMP, testSubject.transform.position);         //currentMP = (rad, theta, phi)
-        Vector2 currentMP2 = new Vector2(currentMP.y, currentMP.z);
-        RotateVector(currentMP2);                                                            //currentMP2 = (theta, phi)
+        Vector2 currentMP2 = new Vector2(currentMP.y - rotTheta, currentMP.z - rotPhi);                          //currentMP2 = (theta, phi)
 
         currentMP2.y = CorrectPhi(currentMP2.y);
         currentMP2.x = CorrectTheta(currentMP2.x);
@@ -269,11 +261,23 @@ public class DivideZones : MonoBehaviour
         
         while (theta > 180)
         {
-            if ((System.Math.Truncate(theta / 180) % 2) == 1)
+            if ((System.Math.Truncate(theta / 180) % 2) == 1 || (System.Math.Truncate(theta / 180) % 2) != 0)
             {
                 theta = 360 - theta;
             }
             if ((System.Math.Truncate(theta / 180) % 2) == 0)
+            {
+                theta -= 360;
+            }
+        }
+
+        while(theta < 0)
+        {
+            if ((System.Math.Truncate(theta / 180) % 2) == 1)
+            {
+                theta = 360 - theta;
+            }
+            if ((System.Math.Truncate(theta / 180) % 2) == 0 && (System.Math.Truncate(theta / 180) % 2) != 0)
             {
                 theta -= 360;
             }
