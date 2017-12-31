@@ -275,11 +275,11 @@ public class DivideZones : MonoBehaviour
         {
             if ((System.Math.Truncate(theta / 180) % 2) == 1)
             {
-                theta = 360 - theta;
+                theta = -(360 - theta);
             }
             if ((System.Math.Truncate(theta / 180) % 2) == 0 && (System.Math.Truncate(theta / 180) % 2) != 0)
             {
-                theta -= 360;
+                theta = -(theta - 360);
             }
         }
 
