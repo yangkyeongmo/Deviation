@@ -8,9 +8,12 @@ public class newDivideZones : MonoBehaviour {
 
     public float testRadius;
     public float testScale;
+    public List<Vector3> midPoints_cart;
 
     private GameObject testSubject;
     private GameObject dot;
+    private float thetaInterval_rad;
+    private float phiInterval_rad;
     private Vector3 direction;
     private Quaternion lookRotation;
     private float delPhi = 0;
@@ -27,8 +30,11 @@ public class newDivideZones : MonoBehaviour {
         dot = GameObject.Find("dot");
         dot.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f) * testScale;
 
-        DrawLatitudeLine(testRadius, 30 * Mathf.Deg2Rad, 2);
-        DrawLongitudeLine(testRadius, 30 * Mathf.Deg2Rad, 2);
+        thetaInterval_rad = 30 * Mathf.Deg2Rad;
+        phiInterval_rad = 30 * Mathf.Deg2Rad;
+
+        DrawLatitudeLine(testRadius, thetaInterval_rad, 2);
+        DrawLongitudeLine(testRadius, phiInterval_rad, 2);
 
         Debug.Log("Draw Complete");
     }
@@ -59,7 +65,8 @@ public class newDivideZones : MonoBehaviour {
         if (Input.GetMouseButtonDown(0))
         {
             GetSpinnedSphericalMousePosition();
-            GetSelectedZoneNumber(30 * Mathf.Deg2Rad, 30 * Mathf.Deg2Rad);
+            //GetSelectedZoneNumber(30 * Mathf.Deg2Rad, 30 * Mathf.Deg2Rad);
+            SetMidPoints();
         }
     }
 
@@ -205,7 +212,7 @@ public class newDivideZones : MonoBehaviour {
         return phi;
     }
 
-    void GetSelectedZoneNumber(float thetaInterval_rad, float phiInterval_rad)
+    public int GetSelectedZoneNumber()
     {
         int k = 0;
         for(int i=0; i < 180  * Mathf.Deg2Rad / thetaInterval_rad; i++)
@@ -216,10 +223,39 @@ public class newDivideZones : MonoBehaviour {
                     && mousePosition_sphe.z > phiInterval_rad * Mathf.Rad2Deg * j && mousePosition_sphe.z < phiInterval_rad * Mathf.Rad2Deg * (j + 1))          // 0 < mousePosition.phi > 30 if j=0
                 {
                     Debug.Log("Selected Zone #(0~71): " + k);                                                                                                   // Zone# = 0 if i,j = 0
+                    break;
                 }
 
                 k++;
             }
         }
+        return k;
+    }
+
+    void SetMidPoints()
+    {
+        Vector3 midPoint_cart;
+        midPoints_cart = new List<Vector3>();
+
+        for (int i = 0; i < 180 * Mathf.Deg2Rad / thetaInterval_rad; i++)
+        {
+            for (int j = 0; j < 360 * Mathf.Deg2Rad / phiInterval_rad; j++)
+            {
+                SphericalToCartesian(2.0f, i * thetaInterval_rad * Mathf.Rad2Deg + thetaInterval_rad / 2 + delTheta, j * phiInterval_rad * Mathf.Rad2Deg + phiInterval_rad / 2 + delPhi);
+
+                midPoint_cart.x = x;
+                midPoint_cart.y = y;
+                midPoint_cart.z = z;
+
+                Debug.Log("midPoint " +midPoints_cart.Count+" :" + midPoint_cart);
+
+                midPoints_cart.Add(midPoint_cart);
+            }
+        }
+    }
+
+    public Vector2 GetDeltaSpin()
+    {
+        return new Vector2(delTheta, delPhi); 
     }
 }
