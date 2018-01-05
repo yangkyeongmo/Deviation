@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 23024254673806366}
   - component: {fileID: 114395290415766652}
   m_Layer: 0
-  m_Name: normalshot 1
+  m_Name: normalshot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,8 +37,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1525815543036556}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.853374, y: -5.696589, z: -12.946766}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -95,8 +95,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0a67329ebce213459b185d9e40834e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentTurret: {fileID: 1283818392327628, guid: a66e2df9603c3534980ca9eb92ffcfcf,
-    type: 2}
   shootspeed: 1
 --- !u!136 &136740104662932188
 CapsuleCollider:
