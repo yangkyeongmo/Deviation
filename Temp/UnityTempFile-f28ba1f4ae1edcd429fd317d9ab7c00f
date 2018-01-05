@@ -166,6 +166,7 @@ Assets/Scripts/MoveShot.cs
 Assets/Scripts/SimpleOrbitSystem.cs
 Assets/Scripts/SpawnAttack.cs
 Assets/Scripts/SpawnOtherThings.cs
+Assets/Scripts/temp_DivideZones.cs
 -r:"D:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\System.Runtime.Serialization.dll"
 -r:"D:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\System.Xml.Linq.dll"
 -r:"D:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\UnityScript.dll"

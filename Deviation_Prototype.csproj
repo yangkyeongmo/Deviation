@@ -227,9 +227,11 @@
     <Compile Include="Assets\Scripts\GravityOrbitSystem.cs" />
     <Compile Include="Assets\Scripts\MovePlayer.cs" />
     <Compile Include="Assets\Scripts\MoveShot.cs" />
+    <Compile Include="Assets\Scripts\newDivideZones.cs" />
     <Compile Include="Assets\Scripts\SimpleOrbitSystem.cs" />
     <Compile Include="Assets\Scripts\SpawnAttack.cs" />
     <Compile Include="Assets\Scripts\SpawnOtherThings.cs" />
+    <Compile Include="Assets\Scripts\temp_DivideZones.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
