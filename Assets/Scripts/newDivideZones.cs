@@ -8,7 +8,6 @@ public class newDivideZones : MonoBehaviour {
 
     public float testRadius;
     public float testScale;
-    public List<Vector3> midPoints_cart;
 
     private GameObject testSubject;
     private GameObject dot;
@@ -37,6 +36,8 @@ public class newDivideZones : MonoBehaviour {
         DrawLongitudeLine(testRadius, phiInterval_rad, 2);
 
         Debug.Log("Draw Complete");
+
+        SetMidPoints();
     }
 	
 	// Update is called once per frame
@@ -66,7 +67,6 @@ public class newDivideZones : MonoBehaviour {
         {
             GetSpinnedSphericalMousePosition();
             //GetSelectedZoneNumber(30 * Mathf.Deg2Rad, 30 * Mathf.Deg2Rad);
-            SetMidPoints();
         }
     }
 
@@ -223,39 +223,32 @@ public class newDivideZones : MonoBehaviour {
                     && mousePosition_sphe.z > phiInterval_rad * Mathf.Rad2Deg * j && mousePosition_sphe.z < phiInterval_rad * Mathf.Rad2Deg * (j + 1))          // 0 < mousePosition.phi > 30 if j=0
                 {
                     Debug.Log("Selected Zone #(0~71): " + k);                                                                                                   // Zone# = 0 if i,j = 0
-                    break;
+                    return k;
                 }
 
                 k++;
             }
         }
-        return k;
+        return 0;
     }
 
     void SetMidPoints()
     {
-        Vector3 midPoint_cart;
-        midPoints_cart = new List<Vector3>();
+        GameObject midPoint;
+        GameObject midPoint_parent = Instantiate(new GameObject());
+        midPoint_parent.transform.parent = testSubject.transform;
+        midPoint_parent.name = "MidPoints";
 
         for (int i = 0; i < 180 * Mathf.Deg2Rad / thetaInterval_rad; i++)
         {
             for (int j = 0; j < 360 * Mathf.Deg2Rad / phiInterval_rad; j++)
             {
-                SphericalToCartesian(2.0f, i * thetaInterval_rad * Mathf.Rad2Deg + thetaInterval_rad / 2 + delTheta, j * phiInterval_rad * Mathf.Rad2Deg + phiInterval_rad / 2 + delPhi);
+                SphericalToCartesian(2.0f, i * thetaInterval_rad + thetaInterval_rad / 2 + delTheta, j * phiInterval_rad + phiInterval_rad / 2 + delPhi - 90 * Mathf.Deg2Rad);
 
-                midPoint_cart.x = x;
-                midPoint_cart.y = y;
-                midPoint_cart.z = z;
-
-                Debug.Log("midPoint " +midPoints_cart.Count+" :" + midPoint_cart);
-
-                midPoints_cart.Add(midPoint_cart);
+                midPoint = Instantiate(new GameObject(), new Vector3(x, y, z), Quaternion.identity);
+                midPoint.transform.parent = midPoint_parent.transform;
+                midPoint.name = "MidPoint" + (i * 12 + j);
             }
         }
-    }
-
-    public Vector2 GetDeltaSpin()
-    {
-        return new Vector2(delTheta, delPhi); 
     }
 }

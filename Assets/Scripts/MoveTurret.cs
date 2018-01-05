@@ -45,9 +45,11 @@ public class MoveTurret : MonoBehaviour {
             if (Physics.Raycast(ray, out hit) && hit.collider.tag == "Player")
             {
                 selectedZoneNumber = newDiv.GetSelectedZoneNumber();
-                settlePosition = newDiv.midPoints_cart[selectedZoneNumber];
+                Debug.Log("Zone #: " + selectedZoneNumber);
+                settlePosition = GameObject.Find("MidPoint" + selectedZoneNumber).transform.position;
+                Debug.Log(settlePosition);
                 transform.position = settlePosition;
-                transform.forward = hit.point - testSubject.transform.position;
+                transform.up = settlePosition - testSubject.transform.position;
                 settled = true;
                 addComp.EraseAllElementOnTurretsList();
                 Debug.Log("Turret is Settled");

@@ -9,10 +9,12 @@ public class AddComponentsOnSphere : MonoBehaviour {
     public GameObject turret;
 
     private List<GameObject> turretsOnPointer;
+    private List<GameObject> turretsSettled;
 
 	// Use this for initialization
 	void Start () {
         turretsOnPointer = new List<GameObject>();
+        turretsSettled = new List<GameObject>();
         selectButton.onClick.AddListener(SetComponentOnPointer);
 	}
 	
@@ -28,11 +30,12 @@ public class AddComponentsOnSphere : MonoBehaviour {
         {
             GameObject instTurret = Instantiate(turret, Input.mousePosition, Quaternion.identity);
             turretsOnPointer.Add(instTurret);
+            Debug.Log(turretsOnPointer.Count);
         }
     }
 
     public void EraseAllElementOnTurretsList()
     {
-        turretsOnPointer = new List<GameObject>();
+        turretsOnPointer.Clear();
     }
 }
