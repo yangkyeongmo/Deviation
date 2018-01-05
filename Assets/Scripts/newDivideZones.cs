@@ -128,13 +128,15 @@ public class newDivideZones : MonoBehaviour {
             mousePosition_cart = hit.point;
         }
 
+        mousePosition_cart = Quaternion.Euler(new Vector3(0.0f, delPhi, delTheta)) * mousePosition_cart;        // correct spin
+
         Debug.Log("Cartesian Mouse Position = " + mousePosition_cart);
 
         mousePosition_sphe = CartesianToSpherical(mousePosition_cart, testSubject.transform.position);
 
-        mousePosition_sphe = mousePosition_sphe - new Vector3(0.0f, delTheta, delPhi); // correct spin
+        //mousePosition_sphe = mousePosition_sphe - new Vector3(0.0f, delTheta, delPhi); // correct spin
         mousePosition_sphe.y = CorrectTheta(mousePosition_sphe.y);  // correct corrected theta
-        mousePosition_sphe.z = CorrectPhi(mousePosition_sphe.z);    // correct corrected phi
+        mousePosition_sphe.z = CorrectPhi(mousePosition_sphe.z, mousePosition_cart);    // correct corrected phi
 
         Debug.Log("Corrected corrected Spherical Mouse Position = " + mousePosition_sphe);
     }
@@ -154,7 +156,7 @@ public class newDivideZones : MonoBehaviour {
 
         rad = Mathf.Sqrt(x * x + y * y + z * z);
         theta = Mathf.Acos(y / rad) * Mathf.Rad2Deg;
-        phi = Mathf.Atan(z / x) * Mathf.Rad2Deg + 90;
+        phi = Mathf.Atan(z / x) * Mathf.Rad2Deg;
 
         return new Vector3(rad, theta, phi);
     }
@@ -181,8 +183,17 @@ public class newDivideZones : MonoBehaviour {
         return theta;
     }
 
-    float CorrectPhi(float phi)
+    float CorrectPhi(float phi, Vector3 mousePosition)
     {
+        if(mousePosition.x > 0)
+        {
+            phi += 90;
+        }
+        else if(mousePosition.x < 0)
+        {
+            phi += 270;
+        }
+
         while (phi > 360)
         {
             phi -= 360;
