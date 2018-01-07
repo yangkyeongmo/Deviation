@@ -40,24 +40,28 @@ public class MoveTurret : MonoBehaviour {
                 transform.position = hit.point;
                 transform.up = hit.point - testSubject.transform.position;
             }
-        }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (Physics.Raycast(ray, out hit) && hit.collider.tag == "Player")
+            if (Input.GetMouseButtonDown(0))
             {
-                selectedZoneNumber = newDiv.GetSelectedZoneNumber();
-                Debug.Log("Zone #: " + selectedZoneNumber);
-                settlePosition = GameObject.Find("MidPoint" + selectedZoneNumber).transform.position;
-                Debug.Log(settlePosition);
-                transform.position = settlePosition;
-                transform.up = settlePosition - testSubject.transform.position;
-                settled = true;
-                transform.parent = testSubject.transform;
-                addComp.EraseAllElementOnTurretsList();
-                Debug.Log("Turret is Settled");
+                if (Physics.Raycast(ray, out hit) && hit.collider.tag == "Player")
+                {
+                    selectedZoneNumber = newDiv.GetSelectedZoneNumber();
+                    Debug.Log("Zone #: " + selectedZoneNumber);
+
+                    settlePosition = GameObject.Find("MidPoint" + selectedZoneNumber).transform.position;
+                    Debug.Log(settlePosition);
+
+                    transform.position = settlePosition;
+                    transform.up = settlePosition - testSubject.transform.position;
+                    settled = true;
+
+                    transform.parent = testSubject.transform;
+                    addComp.ConfirmTurretSettled();
+                    Debug.Log("Turret is Settled");
+                }
             }
         }
+
 
         if (settled && Input.GetKey(KeyCode.Space))
         {
@@ -70,6 +74,5 @@ public class MoveTurret : MonoBehaviour {
         shootPosition = GameObject.Find(this.gameObject.name + "/turret_shotPosition").transform;
         GameObject shot = Instantiate(normalShot, shootPosition.position, Quaternion.identity);
         shot.transform.up = transform.up;
-        shot.transform.parent = transform;
     }
 }

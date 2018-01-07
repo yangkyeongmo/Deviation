@@ -11,10 +11,7 @@ public class MoveNormalShot : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        shootDirection = (GameObject.Find(transform.parent.name + "/turret_shotPosition").transform.position - transform.parent.transform.position).normalized;
-        Debug.Log("ShootDirection: " + shootDirection);
-        transform.up = transform.parent.up;
-        Debug.Log("Parent.up: " + transform.parent.up);
+        shootDirection = transform.position.normalized;
     }
 	
 	// Update is called once per frame
