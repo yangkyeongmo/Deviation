@@ -95,8 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd5ca7bd131b6db4db5c55b063d7881d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerObject: {fileID: 0}
-  shotSpeed: 1
+  shotSpeed: 1.5
 --- !u!136 &136658118454555412
 CapsuleCollider:
   m_ObjectHideFlags: 1

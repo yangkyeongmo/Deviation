@@ -17,6 +17,6 @@ public class MoveNormalShot : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        transform.Translate(shootDirection * shootspeed * Time.deltaTime);
+        transform.position += shootDirection * shootspeed;
     }
 }
