@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class newDivideZones : MonoBehaviour {
 
@@ -8,6 +9,9 @@ public class newDivideZones : MonoBehaviour {
 
     public float testRadius;
     public float testScale;
+    public Text debugText;
+
+    private GameObject debugLongitudeObject;
 
     private GameObject testSubject;
     private GameObject dot;
@@ -35,6 +39,10 @@ public class newDivideZones : MonoBehaviour {
         DrawLatitudeLine(testRadius, thetaInterval_rad, 2);
         DrawLongitudeLine(testRadius, phiInterval_rad, 2);
 
+        debugLongitudeObject = GameObject.Find("testSphere/Longitude0");
+        Text debugLongitudeText = debugLongitudeObject.AddComponent<Text>();
+        debugLongitudeText.text = "0";
+
         Debug.Log("Draw Complete");
 
         SetMidPoints();
@@ -43,24 +51,26 @@ public class newDivideZones : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        debugText.text = ("delTheta: " + delTheta + "\ndelPhi: " + delPhi);
+
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             testSubject.transform.Rotate(Vector3.up, -20.0f, Space.World);
-            delPhi -= 20.0f;
+            delPhi += 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             testSubject.transform.Rotate(Vector3.up, +20.0f, Space.World);
-            delPhi += 20.0f;
+            delPhi -= 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            testSubject.transform.Rotate(Vector3.forward, 20.0f, Space.World);
+            testSubject.transform.Rotate(Vector3.forward, 20.0f);
             delTheta -= 20.0f;
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            testSubject.transform.Rotate(Vector3.forward, -20.0f, Space.World);
+            testSubject.transform.Rotate(Vector3.forward, -20.0f);
             delTheta += 20.0f;
         }
         if (Input.GetMouseButtonDown(0))
