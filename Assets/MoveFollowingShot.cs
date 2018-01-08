@@ -19,5 +19,5 @@ public class MoveFollowingShot : MonoBehaviour {
         direction = (playerObject.transform.position - transform.position).normalized;
         transform.position += direction * shotSpeed * Time.deltaTime;
         transform.up = direction;
-	}
+    }
 }
