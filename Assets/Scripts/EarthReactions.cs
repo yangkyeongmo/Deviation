@@ -54,8 +54,8 @@ public class EarthReactions : MonoBehaviour {
     {
         //Get asteroid around earth
         //Get velocity of that asteroid
-        List<Rigidbody> rb_ast = new List<Rigidbody>();
-        rb_ast.Add(asteroid.GetComponent<Rigidbody>());
+        Rigidbody rb_ast;
+        rb_ast = asteroid.GetComponent<Rigidbody>();
 
         float velocity_ast = rb_ast.velocity.magnitude;
 
